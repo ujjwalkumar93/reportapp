@@ -144,7 +144,7 @@ def get_data():
 		#data.append(so_wise_data)
 		so_items = frappe.db.get_all('Sales Order Item', {"parent": so.get('name')},['idx', 'item_code','qty','rate','amount'], order_by="idx")
 		for i, item in enumerate(so_items):
-			sales_invoice = frappe.db.get_all("Sales Invoice Item", {'sales_order':so.get("name"), "item_code":item.get("item_code"),'docstatus':'1'},['parent','qty'])
+			sales_invoice_item = frappe.db.get_all("Sales Invoice Item", {'sales_order':so.get("name"), "item_code":item.get("item_code"),'docstatus':'1'},['parent','qty'])
 			if(i == 0):
 				item_dict = {}
 				so_wise_data['idx'] = item.get("idx")
@@ -153,15 +153,19 @@ def get_data():
 				so_wise_data['order_item_rate'] = item.get('rate')
 				so_wise_data['net_amount'] = item.get('amount')
 				#data.append(so_wise_data)	
-				for pos,inv in enumerate(sales_invoice):
+				for pos,inv in enumerate(sales_invoice_item):
+					si_date = str(frappe.db.get_value("Sales Invoice",{"name":inv.get('parent')},['posting_date']))
 					if(pos==0):
 						so_wise_data['si_no'] = inv.get('parent')
 						so_wise_data['qty'] = inv.get('qty')
+						so_wise_data[si_date] = si_date
+						so_wise_data['si_date'] = si_date
 						data.append(so_wise_data)
 					else:
 						inv_dict = {}
 						inv_dict['si_no'] = inv.get('parent')
 						inv_dict['qty'] = inv.get('qty')
+						inv_dict['si_date'] = si_date
 						data.append(inv_dict)
 			else:
 				item_dict = {}
@@ -170,18 +174,19 @@ def get_data():
 				item_dict['order_item_qty'] = item.get('qty')
 				item_dict['order_item_rate'] = item.get('rate')
 				item_dict['net_amount'] = item.get('amount')
-				#data.append(item_dict)
-				# if sales_invoice:
-				# if sales_invoice:
-				for pos,inv in enumerate(sales_invoice):
+				
+				for pos,inv in enumerate(sales_invoice_item):
+					si_date = str(frappe.db.get_value("Sales Invoice",{"name":inv.get('parent')},['posting_date']))
 					if(pos==0):
 						item_dict['si_no'] = inv.get('parent')
 						item_dict['si_qty'] = inv.get('qty')
+						item_dict['si_date'] = si_date
 						data.append(item_dict)
 					else:
 						inv_data = {}
 						inv_data['si_no'] = inv.get('parent')
 						inv_data['si_qty'] = inv.get('qty')
+						inv_data['si_date'] = si_date
 						data.append(inv_data)
 				# else:
 				# 	data.append(item_dict)
