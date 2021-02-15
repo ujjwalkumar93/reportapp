@@ -103,7 +103,7 @@ def get_columns():
 			"width": "100px"
 		},
 		{
-			"fieldname":"balance_qty",
+			"fieldname":"bal_qty",
 			"label": _("Balance Qty"),
 			"fieldtype": "Data",
 			"width": "100px"
@@ -155,17 +155,20 @@ def get_data():
 				#data.append(so_wise_data)	
 				for pos,inv in enumerate(sales_invoice_item):
 					si_date = str(frappe.db.get_value("Sales Invoice",{"name":inv.get('parent')},['posting_date']))
+					bal_qty = item.get('qty') - inv.get('qty')
 					if(pos==0):
 						so_wise_data['si_no'] = inv.get('parent')
-						so_wise_data['qty'] = inv.get('qty')
+						so_wise_data['si_qty'] = inv.get('qty')
 						so_wise_data[si_date] = si_date
 						so_wise_data['si_date'] = si_date
+						so_wise_data['bal_qty'] = bal_qty
 						data.append(so_wise_data)
 					else:
 						inv_dict = {}
 						inv_dict['si_no'] = inv.get('parent')
-						inv_dict['qty'] = inv.get('qty')
+						inv_dict['si_qty'] = inv.get('qty')
 						inv_dict['si_date'] = si_date
+						inv_dict['bal_qty'] = bal_qty
 						data.append(inv_dict)
 			else:
 				item_dict = {}
@@ -177,16 +180,19 @@ def get_data():
 				
 				for pos,inv in enumerate(sales_invoice_item):
 					si_date = str(frappe.db.get_value("Sales Invoice",{"name":inv.get('parent')},['posting_date']))
+					bal_qty = item.get('qty') - inv.get('qty')
 					if(pos==0):
 						item_dict['si_no'] = inv.get('parent')
 						item_dict['si_qty'] = inv.get('qty')
 						item_dict['si_date'] = si_date
+						item_dict['bal_qty'] = bal_qty
 						data.append(item_dict)
 					else:
 						inv_data = {}
 						inv_data['si_no'] = inv.get('parent')
 						inv_data['si_qty'] = inv.get('qty')
 						inv_data['si_date'] = si_date
+						inv_data['bal_qty'] = bal_qty
 						data.append(inv_data)
 				# else:
 				# 	data.append(item_dict)
