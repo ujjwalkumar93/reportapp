@@ -18,8 +18,8 @@ def get_columns():
        {
 			"fieldname":"so_no",
 			"label": _("Sales Order No"),
-			"fieldtype": "Data",
-			# "options": "Sales Order",
+			"fieldtype": "Link",
+			"options": "Sales Order",
 			"width": "100px"
 		},
 		{
@@ -84,8 +84,8 @@ def get_columns():
 		{
 			"fieldname":"si_no",
 			"label": _("Invoice Number"),
-			"fieldtype": "Data",
-			# "option": "Sales Invoice",
+			"fieldtype": "Link",
+			"options": "Sales Invoice",
 			"width": "100px"
 		},
 
@@ -145,6 +145,7 @@ def get_data():
 		so_items = frappe.db.get_all('Sales Order Item', {"parent": so.get('name')},['idx', 'item_code','qty','rate','amount'], order_by="idx")
 		for i, item in enumerate(so_items):
 			sales_invoice_item = frappe.db.get_all("Sales Invoice Item", {'sales_order':so.get("name"), "item_code":item.get("item_code"),'docstatus':'1'},['parent','qty'])
+			
 			if(i == 0):
 				item_dict = {}
 				so_wise_data['idx'] = item.get("idx")
@@ -165,6 +166,8 @@ def get_data():
 						data.append(so_wise_data)
 					else:
 						inv_dict = {}
+						inv_dict['idx'] = item.get('idx')
+						inv_dict['item_code'] = item.get('item_code')
 						inv_dict['si_no'] = inv.get('parent')
 						inv_dict['si_qty'] = inv.get('qty')
 						inv_dict['si_date'] = si_date
@@ -189,6 +192,8 @@ def get_data():
 						data.append(item_dict)
 					else:
 						inv_data = {}
+						inv_data['idx'] = item.get("idx")
+						inv_data['item_code'] = item.get("item_code")
 						inv_data['si_no'] = inv.get('parent')
 						inv_data['si_qty'] = inv.get('qty')
 						inv_data['si_date'] = si_date
