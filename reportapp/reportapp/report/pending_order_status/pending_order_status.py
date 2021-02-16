@@ -144,7 +144,7 @@ def get_data():
 		#data.append(so_wise_data)
 		so_items = frappe.db.get_all('Sales Order Item', {"parent": so.get('name')},['idx', 'item_code','qty','rate','amount'], order_by="idx")
 		for i, item in enumerate(so_items):
-			sales_invoice_item = frappe.db.get_all("Sales Invoice Item", {'sales_order':so.get("name"), "item_code":item.get("item_code"),'docstatus':'1'},['parent','qty'])
+			sales_invoice_item = frappe.db.get_all("Sales Invoice Item", {'sales_order':so.get("name"), "item_code":item.get("item_code"),'docstatus':'1'},['parent','qty',])
 			
 			if(i == 0):
 				item_dict = {}
@@ -153,19 +153,27 @@ def get_data():
 				so_wise_data['order_item_qty'] = item.get('qty')
 				so_wise_data['order_item_rate'] = item.get('rate')
 				so_wise_data['net_amount'] = item.get('amount')
-				#data.append(so_wise_data)	
+		
 				for pos,inv in enumerate(sales_invoice_item):
 					si_date = str(frappe.db.get_value("Sales Invoice",{"name":inv.get('parent')},['posting_date']))
 					bal_qty = item.get('qty') - inv.get('qty')
+
+					transport = frappe.db.get_value("Sales Invoice", {"name": inv.get("parent")}, ['transporter', 'lr_no'], as_dict= True)
 					if(pos==0):
+						so_wise_data['transporter_name'] = transport.get("transporter")
+						so_wise_data['transporter_lr_no'] = transport.get("lr_no")
 						so_wise_data['si_no'] = inv.get('parent')
 						so_wise_data['si_qty'] = inv.get('qty')
-						so_wise_data[si_date] = si_date
+						so_wise_data['si_date'] = si_date
 						so_wise_data['si_date'] = si_date
 						so_wise_data['bal_qty'] = bal_qty
 						data.append(so_wise_data)
 					else:
 						inv_dict = {}
+
+						inv_dict['transporter_name'] = transport.get("transporter")
+						inv_dict['transporter_lr_no'] = transport.get("lr_no")
+
 						inv_dict['idx'] = item.get('idx')
 						inv_dict['item_code'] = item.get('item_code')
 						inv_dict['si_no'] = inv.get('parent')
@@ -174,6 +182,7 @@ def get_data():
 						inv_dict['bal_qty'] = bal_qty
 						data.append(inv_dict)
 			else:
+				tem_qty = 0
 				item_dict = {}
 				item_dict['idx'] = item.get("idx")
 				item_dict['item_code'] = item.get("item_code")
@@ -184,11 +193,14 @@ def get_data():
 				for pos,inv in enumerate(sales_invoice_item):
 					si_date = str(frappe.db.get_value("Sales Invoice",{"name":inv.get('parent')},['posting_date']))
 					bal_qty = item.get('qty') - inv.get('qty')
+					transport = frappe.db.get_value("Sales Invoice", {"name": inv.get("parent")}, ['transporter', 'lr_no'], as_dict= True)
 					if(pos==0):
 						item_dict['si_no'] = inv.get('parent')
 						item_dict['si_qty'] = inv.get('qty')
 						item_dict['si_date'] = si_date
 						item_dict['bal_qty'] = bal_qty
+						item_dict['transporter_name'] = transport.get("transporter")
+						item_dict['transporter_lr_no'] = transport.get("lr_no")
 						data.append(item_dict)
 					else:
 						inv_data = {}
@@ -198,6 +210,8 @@ def get_data():
 						inv_data['si_qty'] = inv.get('qty')
 						inv_data['si_date'] = si_date
 						inv_data['bal_qty'] = bal_qty
+						inv_data['transporter_name'] = transport.get("transporter")
+						inv_data['transporter_lr_no'] = transport.get("lr_no")
 						data.append(inv_data)
 				# else:
 				# 	data.append(item_dict)
