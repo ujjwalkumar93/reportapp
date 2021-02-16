@@ -11,7 +11,7 @@ from frappe import _
 
 def execute(filters=None):
 	columns = get_columns()
-	data = get_data()
+	data = get_data(filters)
 	return columns, data
 def get_columns():
 	columns = [
@@ -132,12 +132,37 @@ def get_columns():
     ]
 
 	return columns
-def get_data():
+def get_data(filters):
 	data = []
-	all_so = frappe.db.get_all("Sales Order", {"docstatus":"1"},["name","transaction_date","status","customer"])
+	cond = "where docstatus = 1"
+	filter_data = {"docstatus":"1"}
+	if filters:
+		if filters.get("sales_order_no"):
+			cond += " and name = '{0}'".format(filters.get("sales_order_no"))
+			#filter_data['name'] = filters.get("sales_order_no")
+
+		if filters.get("from_date") and filters.get("to_date"):
+			cond += "and CAST(transaction_date as date) between '{0}' and '{1}'".format(filters.get("from_date"),filters.get("to_date"))
+			
+
+		if filters.get("status"):
+			cond += " and status = '{0}'".format(filters.get("status"))
+			#filter_data['name'] = filters.get("sales_order_no")
+		if filters.get("customer"):
+			cond += " and customer = '{0}'".format(filters.get("customer"))
+			#filter_data['name'] = filters.get("sales_order_no")
+		
+
+	# all_so = frappe.db.get_all("Sales Order", filter_data,["name","transaction_date","status","customer"])
+	query = """select name,transaction_date,status,customer from `tabSales Order` {0};""".format(cond)
+	
+	all_so = frappe.db.sql(query, as_dict = True)
 	for so in all_so:
 		item_bal_qty = []
 		sec_item_bal = []
+
+		item_bal_amt = []
+		sec_bal_amt = []
 
 		so_wise_data = {}
 		so_wise_data['so_no'] = so.get("name")
@@ -169,8 +194,15 @@ def get_data():
 						so_wise_data['si_no'] = inv.get('parent')
 						so_wise_data['si_qty'] = inv.get('qty')
 						so_wise_data['si_date'] = si_date
-						so_wise_data['si_date'] = si_date
 						so_wise_data['bal_qty'] = bal_qty
+
+						paid_amt = item.get('rate') * inv.get('qty')
+						bal_amt = item.get('amount') - paid_amt
+
+						item_bal_amt.clear()
+						item_bal_amt.append(bal_amt)
+
+						so_wise_data['balance_net_amt'] = bal_amt
 						data.append(so_wise_data)
 					else:
 						b = 0
@@ -178,6 +210,12 @@ def get_data():
 							b = item_bal_qty[0] - inv.get('qty')
 							item_bal_qty.clear()
 							item_bal_qty.append(b)
+
+						amt = 0
+						if item_bal_amt:
+							amt = item_bal_amt[0] * item.get('rate') - b  * item.get('rate')
+							item_bal_amt.clear()
+							item_bal_amt.append(amt)
 
 						inv_dict = {}
 						inv_dict['transporter_name'] = transport.get("transporter")
@@ -189,6 +227,11 @@ def get_data():
 						inv_dict['si_qty'] = inv.get('qty')
 						inv_dict['si_date'] = si_date
 						inv_dict['bal_qty'] = b
+
+						paid_amt = item.get('rate') * inv.get('qty')
+						bal_amt = item.get('amount') - paid_amt
+
+						inv_dict['balance_net_amt'] = amt
 						data.append(inv_dict)
 			else:
 				item_dict = {}
