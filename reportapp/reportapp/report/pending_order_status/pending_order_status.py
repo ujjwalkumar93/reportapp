@@ -137,6 +137,8 @@ def get_data():
 	all_so = frappe.db.get_all("Sales Order", {"docstatus":"1"},["name","transaction_date","status","customer"])
 	for so in all_so:
 		item_bal_qty = []
+		sec_item_bal = []
+
 		so_wise_data = {}
 		so_wise_data['so_no'] = so.get("name")
 		so_wise_data['date'] = so.get("transaction_date")
@@ -201,8 +203,8 @@ def get_data():
 					bal_qty = item.get('qty') - inv.get('qty')
 					transport = frappe.db.get_value("Sales Invoice", {"name": inv.get("parent")}, ['transporter', 'lr_no'], as_dict= True)
 					if(pos==0):
-						item_bal_qty.clear()
-						item_bal_qty.append(bal_qty)
+						sec_item_bal.clear()
+						sec_item_bal.append(bal_qty)
 						item_dict['si_no'] = inv.get('parent')
 						item_dict['si_qty'] = inv.get('qty')
 						item_dict['si_date'] = si_date
@@ -211,18 +213,20 @@ def get_data():
 						item_dict['transporter_lr_no'] = transport.get("lr_no")
 						data.append(item_dict)
 					else:
+						mb = 0
+						if sec_item_bal:
+							print('sec_item_bal[0]:',sec_item_bal[0])
+							mb = sec_item_bal[0] - inv.get('qty')
+							sec_item_bal.clear()
+							sec_item_bal.append(mb)
 						inv_data = {}
 						inv_data['idx'] = item.get("idx")
 						inv_data['item_code'] = item.get("item_code")
 						inv_data['si_no'] = inv.get('parent')
 						inv_data['si_qty'] = inv.get('qty')
 						inv_data['si_date'] = si_date
-						inv_data['bal_qty'] = bal_qty
+						inv_data['bal_qty'] = mb
 						inv_data['transporter_name'] = transport.get("transporter")
 						inv_data['transporter_lr_no'] = transport.get("lr_no")
 						data.append(inv_data)
-				# else:
-				# 	data.append(item_dict)
-			print("*****"*10)
-			print(item_bal_qty)
 	return data
