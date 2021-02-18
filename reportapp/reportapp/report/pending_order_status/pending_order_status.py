@@ -203,7 +203,9 @@ def get_data(filters):
 						item_bal_amt.append(bal_amt)
 
 						so_wise_data['balance_net_amt'] = bal_amt
-						data.append(so_wise_data)
+						# print('1', so_wise_data)
+						# data.append(so_wise_data)
+						# so_wise_data.clear()
 					else:
 						b = 0
 						if item_bal_qty:
@@ -232,8 +234,13 @@ def get_data(filters):
 						bal_amt = item.get('amount') - paid_amt
 
 						inv_dict['balance_net_amt'] = amt
+						print('2', inv_dict)
 						data.append(inv_dict)
-				data.append(so_wise_data)
+				print('3',so_wise_data)
+				if so_wise_data:
+					print("*"*100)
+					print(so_wise_data)
+					data.append(so_wise_data)
 			else:
 				item_dict = {}
 				item_dict['idx'] = item.get("idx")
@@ -255,6 +262,7 @@ def get_data(filters):
 						item_dict['bal_qty'] = bal_qty
 						item_dict['transporter_name'] = transport.get("transporter")
 						item_dict['transporter_lr_no'] = transport.get("lr_no")
+						print('4', item_dict)
 						data.append(item_dict)
 					else:
 						mb = 0
@@ -272,6 +280,8 @@ def get_data(filters):
 						inv_data['bal_qty'] = mb
 						inv_data['transporter_name'] = transport.get("transporter")
 						inv_data['transporter_lr_no'] = transport.get("lr_no")
+						print('5', inv_data)
 						data.append(inv_data)
+				print('6', item_dict)
 				data.append(item_dict)
 	return data
