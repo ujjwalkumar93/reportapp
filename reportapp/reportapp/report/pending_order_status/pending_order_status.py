@@ -135,7 +135,7 @@ def get_columns():
 def get_data(filters):
 	data = []
 	cond = "where docstatus = 1"
-	filter_data = {"docstatus":"1"}
+	# filter_data = {"docstatus":"1"}
 	if filters:
 		if filters.get("sales_order_no"):
 			cond += " and name = '{0}'".format(filters.get("sales_order_no"))
@@ -233,6 +233,7 @@ def get_data(filters):
 
 						inv_dict['balance_net_amt'] = amt
 						data.append(inv_dict)
+				data.append(so_wise_data)
 			else:
 				item_dict = {}
 				item_dict['idx'] = item.get("idx")
@@ -272,4 +273,5 @@ def get_data(filters):
 						inv_data['transporter_name'] = transport.get("transporter")
 						inv_data['transporter_lr_no'] = transport.get("lr_no")
 						data.append(inv_data)
+				data.append(item_dict)
 	return data
