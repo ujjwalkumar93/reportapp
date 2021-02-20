@@ -224,8 +224,8 @@ def get_data(filters):
 							d['idx'] = si_item[0].get("idx")
 							d['item_code'] = si_item[0].get("item_code")
 							# d['order_item_qty'] = item.get("qty")
-							d['order_item_rate'] = item.get('rate')
-							d['net_amount'] = item.get('amount')
+							# d['order_item_rate'] = item.get('rate')
+							# d['net_amount'] = item.get('amount')
 							d['si_no'] = i.get('parent')
 							d['si_date'] = si_date
 							d['si_qty'] = i.get('qty')
@@ -268,14 +268,12 @@ def get_data(filters):
 								item_bal_amt.clear()
 								item_bal_amt.append(a)
 							d = {}
-							print("*******")
-							print(a,i.get("item_code") )
-							print(item_bal_amt)
+							
 							d['idx'] = i.get("idx")
 							d['item_code'] = i.get("item_code")
 							# d['order_item_qty'] = item.get("qty")
-							d['order_item_rate'] = item.get('rate')
-							d['net_amount'] = item.get('amount')
+							# d['order_item_rate'] = item.get('rate')
+							# d['net_amount'] = item.get('amount')
 							d['si_no'] = i.get('parent')
 							d['si_date'] = si_date
 							d['si_qty'] = i.get('qty')
