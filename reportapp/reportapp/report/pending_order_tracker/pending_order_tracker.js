@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 /* eslint-disable */
 
-frappe.query_reports["Pending Order Status"] = {
+frappe.query_reports["Pending Order Tracker"] = {
 	"filters": [
 		{
 			"fieldname":"sales_order_no",

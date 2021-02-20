@@ -12,11 +12,11 @@
  "modified": "2021-02-14 20:42:30.626084",
  "modified_by": "Administrator",
  "module": "Reportapp",
- "name": "Pending Order Status",
+ "name": "Pending Order Tracker",
  "owner": "Administrator",
  "prepared_report": 0,
  "ref_doctype": "Sales Order",
- "report_name": "Pending Order Status",
+ "report_name": "Pending Order Tracker",
  "report_type": "Script Report",
  "roles": [
   {
