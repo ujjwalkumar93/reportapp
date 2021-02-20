@@ -28,7 +28,7 @@ frappe.query_reports["Pending Order Status"] = {
 			"fieldname":"status",
 			"label": __("Status"),
 			"fieldtype": "Select",
-			"options": "To Deliver and Bill\nTo Bill\nTo Deliver\nCompleted",
+			"options": " \nTo Deliver and Bill\nTo Bill\nTo Deliver\nCompleted",
 			"width": "100px"
 		},
 		{
