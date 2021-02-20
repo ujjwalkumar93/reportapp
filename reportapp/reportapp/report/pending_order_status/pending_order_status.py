@@ -142,7 +142,7 @@ def get_data(filters):
 			#filter_data['name'] = filters.get("sales_order_no")
 
 		if filters.get("from_date") and filters.get("to_date"):
-			cond += "and CAST(transaction_date as date) between '{0}' and '{1}'".format(filters.get("from_date"),filters.get("to_date"))
+			cond += " and CAST(transaction_date as date) between '{0}' and '{1}'".format(filters.get("from_date"),filters.get("to_date"))
 			
 
 		if filters.get("status"):
@@ -223,7 +223,7 @@ def get_data(filters):
 							d = {}
 							d['idx'] = si_item[0].get("idx")
 							d['item_code'] = si_item[0].get("item_code")
-							d['order_item_qty'] = item.get("qty")
+							# d['order_item_qty'] = item.get("qty")
 							d['order_item_rate'] = item.get('rate')
 							d['net_amount'] = item.get('amount')
 							d['si_no'] = i.get('parent')
@@ -273,7 +273,7 @@ def get_data(filters):
 							print(item_bal_amt)
 							d['idx'] = i.get("idx")
 							d['item_code'] = i.get("item_code")
-							d['order_item_qty'] = item.get("qty")
+							# d['order_item_qty'] = item.get("qty")
 							d['order_item_rate'] = item.get('rate')
 							d['net_amount'] = item.get('amount')
 							d['si_no'] = i.get('parent')
