@@ -64,21 +64,21 @@ def get_columns():
 
 		{
 			"fieldname":"order_item_qty",
-			"label": _("Order Item Qty"),
-			"fieldtype": "Data",
+			"label": _("Qty"),
+			"fieldtype": "Float",
 			"width": "100px"
 		},
 		{
 			"fieldname":"order_item_rate",
-			"label": _("Order Item Rate"),
-			"fieldtype": "Data",
+			"label": _("Rate"),
+			"fieldtype": "Currency",
 			"width": "100px"
 		},
 
 		{
 			"fieldname":"net_amount",
 			"label": _("Net Amount"),
-			"fieldtype": "Data",
+			"fieldtype": "Currency",
 			"width": "100px"
 		},
 		{
@@ -86,7 +86,7 @@ def get_columns():
 			"label": _("Invoice Number"),
 			"fieldtype": "Link",
 			"options": "Sales Invoice",
-			"width": "100px"
+			"width": "150px"
 		},
 
 		{
