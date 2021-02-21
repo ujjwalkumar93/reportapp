@@ -154,7 +154,7 @@ def get_data(filters):
 		
 
 	# all_so = frappe.db.get_all("Sales Order", filter_data,["name","transaction_date","status","customer"])
-	query = """select name,transaction_date,status,customer from `tabSales Order` {0};""".format(cond)
+	query = """select name,transaction_date,status,customer from `tabSales Order` {0} order by name desc;""".format(cond)
 	
 	all_so = frappe.db.sql(query, as_dict = True)
 	for so in all_so:
@@ -173,9 +173,12 @@ def get_data(filters):
 
 		first_item = {}
 		#data.append(soi_wise_data)
-		so_items = frappe.db.get_all('Sales Order Item', {"parent": so.get('name')},['idx', 'item_code','qty','rate','amount'], order_by="item_code")
-		
+		so_items = frappe.db.get_all('Sales Order Item', {"parent": so.get('name')},['idx', 'item_code','qty','rate','amount'], order_by="idx")
+		q = """select idx,item_code,qty,rate,amount from `tabSales Order Item` where parent = '{0}' order by idx asc""".format(so.get('name'))
+		#so_items = frappe.db.sql(q, as_dict = True)
 		for soi_pos, item in enumerate(so_items):
+			print('---------')
+			print(item)
 			si_item = fetch_si(so.get('name'),item.get('item_code'))
 			if si_item:
 				# on si
@@ -208,6 +211,7 @@ def get_data(filters):
 							d['bal_amt'] = bal_amt
 							d['transporter_name'] = transport.get("transporter")
 							d['transporter_lr_no'] = transport.get("lr_no")
+							# if bal_qty > 0:
 							data.append(d)
 						if p > 0:
 							b = 0
@@ -221,6 +225,10 @@ def get_data(filters):
 								item_bal_amt.clear()
 								item_bal_amt.append(a)
 							d = {}
+							d['so_no'] = so.get("name")
+							d['date'] = so.get("transaction_date")
+							d['status'] = so.get("status")
+							d['customer'] = so.get("customer")
 							d['idx'] = si_item[0].get("idx")
 							d['item_code'] = si_item[0].get("item_code")
 							# d['order_item_qty'] = item.get("qty")
@@ -233,6 +241,9 @@ def get_data(filters):
 							d['bal_amt'] = a
 							d['transporter_name'] = transport.get("transporter")
 							d['transporter_lr_no'] = transport.get("lr_no")
+							# if b > 0:
+							print("#############")
+							print(b)
 							data.append(d)
 				#si_item = fetch_si(so.get('name'),item.get('item_code'))[1:]
 				#for i in si_item:
@@ -246,6 +257,10 @@ def get_data(filters):
 							item_bal_amt.clear()
 							item_bal_amt.append(bal_amt)
 							d = {}
+							d['so_no'] = so.get("name")
+							d['date'] = so.get("transaction_date")
+							d['status'] = so.get("status")
+							d['customer'] = so.get("customer")
 							d['idx'] = i.get("idx")
 							d['item_code'] = i.get("item_code")
 							d['order_item_qty'] = item.get("qty")
@@ -256,7 +271,8 @@ def get_data(filters):
 							d['si_qty'] = i.get('qty')
 							d['bal_amt'] = bal_amt
 							d['bal_qty'] = bal_qty
-							data.append(d)
+							if bal_qty > 0:
+								data.append(d)
 						if p > 0:
 							b = 0
 							if item_bal_qty:
@@ -269,6 +285,10 @@ def get_data(filters):
 								item_bal_amt.append(a)
 							d = {}
 							
+							d['so_no'] = so.get("name")
+							d['date'] = so.get("transaction_date")
+							d['status'] = so.get("status")
+							d['customer'] = so.get("customer")
 							d['idx'] = i.get("idx")
 							d['item_code'] = i.get("item_code")
 							# d['order_item_qty'] = item.get("qty")
@@ -279,6 +299,7 @@ def get_data(filters):
 							d['si_qty'] = i.get('qty')
 							d['bal_qty'] = b
 							d['bal_amt'] = a
+							#if b > 0:
 							data.append(d)
 			else:
 				# on so
@@ -292,6 +313,10 @@ def get_data(filters):
 				
 				if soi_pos > 0:
 					d = {}
+					d['so_no'] = so.get("name")
+					d['date'] = so.get("transaction_date")
+					d['status'] = so.get("status")
+					d['customer'] = so.get("customer")
 					d['idx'] = item.get("idx")
 					d['item_code'] = item.get("item_code")
 					d['order_item_qty'] = item.get("qty")
