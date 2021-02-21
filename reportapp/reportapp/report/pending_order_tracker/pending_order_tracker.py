@@ -173,13 +173,13 @@ def get_data(filters):
 
 		first_item = {}
 		#data.append(soi_wise_data)
-		so_items = frappe.db.get_all('Sales Order Item', {"parent": so.get('name')},['idx', 'item_code','qty','rate','amount'], order_by="idx")
+		so_items = frappe.db.get_all('Sales Order Item', {"parent": so.get('name')},['idx', 'item_code','qty','rate','amount','name'], order_by="idx")
 		q = """select idx,item_code,qty,rate,amount from `tabSales Order Item` where parent = '{0}' order by idx asc""".format(so.get('name'))
 		#so_items = frappe.db.sql(q, as_dict = True)
 		for soi_pos, item in enumerate(so_items):
-			print('---------')
-			print(item)
-			si_item = fetch_si(so.get('name'),item.get('item_code'))
+			# print('---------')
+			# print(item)
+			si_item = fetch_si(so.get('name'),item.get('item_code'),item.get('name'))
 			if si_item:
 				# on si
 				if soi_pos == 0:
@@ -242,8 +242,8 @@ def get_data(filters):
 							d['transporter_name'] = transport.get("transporter")
 							d['transporter_lr_no'] = transport.get("lr_no")
 							# if b > 0:
-							print("#############")
-							print(b)
+							# 	print("#############")
+							# 	print(b)
 							data.append(d)
 				#si_item = fetch_si(so.get('name'),item.get('item_code'))[1:]
 				#for i in si_item:
@@ -271,8 +271,8 @@ def get_data(filters):
 							d['si_qty'] = i.get('qty')
 							d['bal_amt'] = bal_amt
 							d['bal_qty'] = bal_qty
-							if bal_qty > 0:
-								data.append(d)
+							#if bal_qty > 0:
+							data.append(d)
 						if p > 0:
 							b = 0
 							if item_bal_qty:
@@ -299,33 +299,33 @@ def get_data(filters):
 							d['si_qty'] = i.get('qty')
 							d['bal_qty'] = b
 							d['bal_amt'] = a
-							#if b > 0:
+							# if b > 0:
 							data.append(d)
 			else:
 				# on so
-				if soi_pos == 0:
-					soi_wise_data['idx'] = item.get("idx")
-					soi_wise_data['item_code'] = item.get("item_code")
-					soi_wise_data['order_item_qty'] = item.get("qty")
-					soi_wise_data['order_item_rate'] = item.get('rate')
-					soi_wise_data['net_amount'] = item.get('amount')
-					data.append(soi_wise_data)
+				#if soi_pos == 0:
+				soi_wise_data['idx'] = item.get("idx")
+				soi_wise_data['item_code'] = item.get("item_code")
+				soi_wise_data['order_item_qty'] = item.get("qty")
+				soi_wise_data['order_item_rate'] = item.get('rate')
+				soi_wise_data['net_amount'] = item.get('amount')
+				data.append(soi_wise_data)
 				
-				if soi_pos > 0:
-					d = {}
-					d['so_no'] = so.get("name")
-					d['date'] = so.get("transaction_date")
-					d['status'] = so.get("status")
-					d['customer'] = so.get("customer")
-					d['idx'] = item.get("idx")
-					d['item_code'] = item.get("item_code")
-					d['order_item_qty'] = item.get("qty")
-					d['order_item_rate'] = item.get('rate')
-					d['net_amount'] = item.get('amount')
-					data.append(d)
+				# if soi_pos > 0:
+				# 	d = {}
+				# 	d['so_no'] = so.get("name")
+				# 	d['date'] = so.get("transaction_date")
+				# 	d['status'] = so.get("status")
+				# 	d['customer'] = so.get("customer")
+				# 	d['idx'] = item.get("idx")
+				# 	d['item_code'] = item.get("item_code")
+				# 	d['order_item_qty'] = item.get("qty")
+				# 	d['order_item_rate'] = item.get('rate')
+				# 	d['net_amount'] = item.get('amount')
+				# 	data.append(d)
 	return data
 
-def fetch_si(name,item_code):
-	data = frappe.db.get_all("Sales Invoice Item", {'sales_order':name, "item_code":item_code,'docstatus':'1'},['parent','qty','item_code','idx'], order_by= "item_code")
+def fetch_si(name,item_code,so_detail):
+	data = frappe.db.get_all("Sales Invoice Item", {'sales_order':name, "item_code":item_code,'docstatus':'1','so_detail': so_detail},['parent','qty','item_code','idx'], order_by= "idx")
 	return data
 	
