@@ -164,13 +164,6 @@ def get_data(filters):
 		item_bal_amt = []
 		sec_bal_amt = []
 
-		soi_wise_data = {}
-		soi_wise_data['so_no'] = so.get("name")
-		soi_wise_data['date'] = so.get("transaction_date")
-		soi_wise_data['status'] = so.get("status")
-		soi_wise_data['customer'] = so.get("customer")
-
-
 		first_item = {}
 		#data.append(soi_wise_data)
 		so_items = frappe.db.get_all('Sales Order Item', {"parent": so.get('name')},['idx', 'item_code','qty','rate','amount','name'], order_by="idx")
@@ -304,6 +297,11 @@ def get_data(filters):
 			else:
 				# on so
 				#if soi_pos == 0:
+				soi_wise_data = {}
+				soi_wise_data['so_no'] = so.get("name")
+				soi_wise_data['date'] = so.get("transaction_date")
+				soi_wise_data['status'] = so.get("status")
+				soi_wise_data['customer'] = so.get("customer")
 				soi_wise_data['idx'] = item.get("idx")
 				soi_wise_data['item_code'] = item.get("item_code")
 				soi_wise_data['order_item_qty'] = item.get("qty")
