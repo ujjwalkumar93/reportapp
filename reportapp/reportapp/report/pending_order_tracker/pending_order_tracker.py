@@ -135,6 +135,7 @@ def get_columns():
 def get_data(filters):
 	data = []
 	cond = "where docstatus = 1"
+	si_date = None
 	# filter_data = {"docstatus":"1"}
 	if filters:
 		if filters.get("sales_order_no"):
@@ -155,7 +156,6 @@ def get_data(filters):
 
 	# all_so = frappe.db.get_all("Sales Order", filter_data,["name","transaction_date","status","customer"])
 	query = """select name,transaction_date,status,customer from `tabSales Order` {0} order by name desc;""".format(cond)
-	
 	all_so = frappe.db.sql(query, as_dict = True)
 	for so in all_so:
 		item_bal_qty = []
@@ -170,8 +170,6 @@ def get_data(filters):
 		q = """select idx,item_code,qty,rate,amount from `tabSales Order Item` where parent = '{0}' order by idx asc""".format(so.get('name'))
 		#so_items = frappe.db.sql(q, as_dict = True)
 		for soi_pos, item in enumerate(so_items):
-			# print('---------')
-			# print(item)
 			si_item = fetch_si(so.get('name'),item.get('item_code'),item.get('name'))
 			if si_item:
 				# on si
@@ -224,9 +222,6 @@ def get_data(filters):
 							d['customer'] = so.get("customer")
 							d['idx'] = si_item[0].get("idx")
 							d['item_code'] = si_item[0].get("item_code")
-							# d['order_item_qty'] = item.get("qty")
-							# d['order_item_rate'] = item.get('rate')
-							# d['net_amount'] = item.get('amount')
 							d['si_no'] = i.get('parent')
 							d['si_date'] = si_date
 							d['si_qty'] = i.get('qty')
@@ -284,9 +279,6 @@ def get_data(filters):
 							d['customer'] = so.get("customer")
 							d['idx'] = i.get("idx")
 							d['item_code'] = i.get("item_code")
-							# d['order_item_qty'] = item.get("qty")
-							# d['order_item_rate'] = item.get('rate')
-							# d['net_amount'] = item.get('amount')
 							d['si_no'] = i.get('parent')
 							d['si_date'] = si_date
 							d['si_qty'] = i.get('qty')
@@ -309,18 +301,6 @@ def get_data(filters):
 				soi_wise_data['net_amount'] = item.get('amount')
 				data.append(soi_wise_data)
 				
-				# if soi_pos > 0:
-				# 	d = {}
-				# 	d['so_no'] = so.get("name")
-				# 	d['date'] = so.get("transaction_date")
-				# 	d['status'] = so.get("status")
-				# 	d['customer'] = so.get("customer")
-				# 	d['idx'] = item.get("idx")
-				# 	d['item_code'] = item.get("item_code")
-				# 	d['order_item_qty'] = item.get("qty")
-				# 	d['order_item_rate'] = item.get('rate')
-				# 	d['net_amount'] = item.get('amount')
-				# 	data.append(d)
 	return data
 
 def fetch_si(name,item_code,so_detail):
